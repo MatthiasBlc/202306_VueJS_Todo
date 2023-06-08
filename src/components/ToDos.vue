@@ -11,6 +11,8 @@ let filter = ref('all')
 
 const remaining = computed(() => todos.value.filter(todo => !todo.completed).length)
 
+const doneTodos = computed(() => todos.value.filter(todo => todo.completed).length)
+
 function addTodo() {
   todos.value.push({
     completed: false,
@@ -41,6 +43,10 @@ const allDone = computed({
 
 function deleteTodo(todo) {
   todos.value = todos.value.filter(t => t !== todo)
+}
+
+function deleteCompleted() {
+  todos.value = todos.value.filter(todo => !todo.completed)
 }
 
 </script>
@@ -77,6 +83,7 @@ function deleteTodo(todo) {
         <li> <a href="#" :class="{ selected: filter === 'done' }" @click.prevent="filter = 'done'">Faites</a>
         </li>
       </ul>
+      <button class="clear-completed" v-show="doneTodos" @click.prevent="deleteCompleted">Supr. finies</button>
 
     </footer>
   </section>
