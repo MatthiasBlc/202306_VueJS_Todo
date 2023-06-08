@@ -1,13 +1,12 @@
 <script setup>
 import { computed, ref } from 'vue';
 
-const todos = ref([{
-  name: 'Une toute nouvelle tâche',
-  completed: false
-}])
+const todos = ref([])
 
 let newTodo = ''
 let filter = ref('all')
+let editing = ref(null)
+let oldTodo = ref(null)
 
 const remaining = computed(() => todos.value.filter(todo => !todo.completed).length)
 
@@ -49,6 +48,31 @@ function deleteCompleted() {
   todos.value = todos.value.filter(todo => !todo.completed)
 }
 
+function editTodo(todo) {
+  editing.value = todo
+  oldTodo.value = todo.name
+}
+
+function doneEdit() {
+  editing.value = null
+}
+
+function cancelEdit() {
+  editing.value.name = oldTodo.value
+  doneEdit()
+}
+
+//WIP FOCUS WITH SETUP ?? 
+const vFocus = {
+  mounted: (el, value) => {
+    if (value) {
+      el.focus()
+    }
+  }
+}
+//WIP FOCUS WITH SETUP ?? 
+
+
 </script>
 
 <template>
@@ -64,12 +88,15 @@ function deleteCompleted() {
     <div class="main">
 
       <ul class="todo-list">
-        <li class="todo" v-for="todo in  filteredTodos " :key="todo.id" :class="{ completed: todo.completed }">
+        <li class="todo" v-for="todo in  filteredTodos " :key="todo.id"
+          :class="{ completed: todo.completed, editing: todo === editing }">
           <div class="view">
             <input type="checkbox" v-model="todo.completed" class="toggle">
-            <label>{{ todo.name }}</label>
+            <label @dblclick="editTodo(todo)">{{ todo.name }}</label>
             <button class="destroy" @click.prevent="deleteTodo(todo)"></button>
           </div>
+          <input type="text" class="edit" v-model="todo.name" @keyup.enter="doneEdit" @blur="doneEdit"
+            @keyup.escape="cancelEdit" v-focus="todo === editing">
         </li>
       </ul>
     </div>
