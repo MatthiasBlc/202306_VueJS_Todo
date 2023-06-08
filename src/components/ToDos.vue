@@ -25,8 +25,18 @@ const filteredTodos = computed(() => {
   } else if (filter.value === 'done') {
     return todos.value.filter(todo => todo.completed)
   }
-
   return todos.value
+})
+
+const allDone = computed({
+  get() {
+    return remaining.value === 0
+  },
+  set(value) {
+    todos.value.forEach(todo => {
+      todo.completed = value
+    });
+  }
 })
 
 </script>
@@ -38,8 +48,11 @@ const filteredTodos = computed(() => {
       <h1>Todos</h1>
 
       <input type="text" class="new-todo" placeholder="Ajouter une tache" v-model="newTodo" @keyup.enter="addTodo">
+      <input type="checkbox" class="" v-model="allDone">
     </header>
+
     <div class="main">
+
       <ul class="todo-list">
         <li class="todo" v-for="todo in  filteredTodos " :key="todo.id" :class="{ completed: todo.completed }">
           <div class="view">
